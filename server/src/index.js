@@ -128,13 +128,21 @@ const initializeDatabase = async () => {
 const startServer = async () => {
   try {
     await initializeDatabase();
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`====================================================`);
       console.log(`  MITRA Attendance Backend Server Running`);
       console.log(`  Local URL: http://localhost:${PORT}`);
       console.log(`  Database Engine: ${isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local Persistent Engine'}`);
       console.log(`  API Status: http://localhost:${PORT}/api/health`);
       console.log(`====================================================`);
+    });
+
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`[Server] Port ${PORT} is already in use. Stop the existing backend or run with a different PORT.`);
+        process.exit(1);
+      }
+      throw err;
     });
   } catch (err) {
     console.error('Failed to start server:', err);
