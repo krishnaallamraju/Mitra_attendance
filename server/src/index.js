@@ -3,12 +3,76 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
 const { isSupabaseConfigured, testSupabaseConnection } = require('./config/supabase');
+const { supabase } = require('./config/supabase');
+const bcrypt = require('bcryptjs');
 const { User } = require('./models/User');
 const { getStudentsFromExcel } = require('./import_excel');
 
 const authRoutes = require('./routes/auth.routes');
 const studentRoutes = require('./routes/student.routes');
 const attendanceRoutes = require('./routes/attendance.routes');
+
+const ensureSupabaseUsers = async () => {
+  if (!supabase) return;
+
+  const { data: existingUsers, error: existingError } = await supabase
+    .from('users')
+    .select('email');
+  if (existingError) throw existingError;
+
+  const existingEmails = new Set((existingUsers || []).map((user) => user.email.toLowerCase()));
+  const usersToCreate = [];
+  const adminPasswordHash = await bcrypt.hash('admin123', 10);
+
+  if (!existingEmails.has('admin@mitra.edu')) {
+    usersToCreate.push({
+      name: 'MITRA Super Admin',
+      username: 'admin',
+      email: 'admin@mitra.edu',
+      role: 'admin',
+      password_hash: adminPasswordHash,
+      is_active: true
+    });
+  }
+
+  const students = getStudentsFromExcel();
+  const studentPasswordHash = await bcrypt.hash('student123', 10);
+  students.forEach((student) => {
+    if (!existingEmails.has(student.email.toLowerCase())) {
+      usersToCreate.push({
+        name: student.name,
+        username: student.rollNumber.toLowerCase(),
+        email: student.email.toLowerCase(),
+        roll_number: student.rollNumber,
+        club_name: student.team,
+        role: 'student',
+        password_hash: studentPasswordHash,
+        is_active: true
+      });
+    }
+  });
+
+  if (usersToCreate.length === 0) return;
+
+  const { data: createdUsers, error: createError } = await supabase
+    .from('users')
+    .insert(usersToCreate)
+    .select('id, roll_number, club_name, role');
+  if (createError) throw createError;
+
+  const studentRows = (createdUsers || [])
+    .filter((user) => user.role === 'student')
+    .map((user) => ({
+      user_id: user.id,
+      roll_number: user.roll_number,
+      club_name: user.club_name
+    }));
+  if (studentRows.length > 0) {
+    const { error: relationError } = await supabase.from('students').upsert(studentRows, { onConflict: 'user_id' });
+    if (relationError) throw relationError;
+  }
+  console.log(`[Server] Provisioned ${usersToCreate.length} missing Supabase user account(s).`);
+};
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -78,6 +142,7 @@ const initializeDatabase = async () => {
       const connection = await testSupabaseConnection();
       if (connection.connected) {
         console.log('[Server] Supabase PostgreSQL connected successfully.');
+        await ensureSupabaseUsers();
       } else {
         console.warn('[Server] Supabase ping returned:', connection.error || 'Check table schema');
       }
