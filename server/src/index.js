@@ -67,10 +67,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server & Check Seed
-const startServer = async () => {
-  try {
-    if (isSupabaseConfigured()) {
+// Initialize the configured database and local seed data once per process.
+const initializeDatabase = async () => {
+  if (process.env.VERCEL && !isSupabaseConfigured()) {
+    throw new Error('Supabase must be configured when running the API on Vercel.');
+  }
+
+  if (isSupabaseConfigured()) {
       console.log('[Server] Connecting to Supabase PostgreSQL...');
       const connection = await testSupabaseConnection();
       if (connection.connected) {
@@ -78,7 +81,7 @@ const startServer = async () => {
       } else {
         console.warn('[Server] Supabase ping returned:', connection.error || 'Check table schema');
       }
-    } else {
+  } else {
       console.log('[Server] Initializing local database fallback...');
       await connectDB();
 
@@ -118,14 +121,19 @@ const startServer = async () => {
         }
       }
       console.log(`[Server] Synced Excel dataset: ${studentsFromExcel.length} students loaded (${createdCount} newly inserted).`);
-    }
+  }
+};
 
+// Start a normal HTTP server for local development.
+const startServer = async () => {
+  try {
+    await initializeDatabase();
     app.listen(PORT, () => {
       console.log(`====================================================`);
-      console.log(`  🚀 MITRA Attendance Backend Server Running`);
-      console.log(`  🌐 Local URL: http://localhost:${PORT}`);
-      console.log(`  ⚡ Database Engine: ${isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local Persistent Engine'}`);
-      console.log(`  ⚡ API Status: http://localhost:${PORT}/api/health`);
+      console.log(`  MITRA Attendance Backend Server Running`);
+      console.log(`  Local URL: http://localhost:${PORT}`);
+      console.log(`  Database Engine: ${isSupabaseConfigured() ? 'Supabase PostgreSQL' : 'Local Persistent Engine'}`);
+      console.log(`  API Status: http://localhost:${PORT}/api/health`);
       console.log(`====================================================`);
     });
   } catch (err) {
@@ -134,4 +142,8 @@ const startServer = async () => {
   }
 };
 
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { app, initializeDatabase };
