@@ -12,7 +12,13 @@ module.exports = async (req, res) => {
     return app(req, res);
   } catch (error) {
     databaseInitialization = null;
-    console.error('Vercel API initialization failed:', error);
-    return res.status(500).json({ message: 'API initialization failed.' });
+    console.error('[Vercel API] Database initialization failed:', {
+      name: error.name,
+      message: error.message
+    });
+    return res.status(500).json({
+      success: false,
+      message: 'API initialization failed.'
+    });
   }
 };

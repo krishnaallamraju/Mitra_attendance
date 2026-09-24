@@ -82,6 +82,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
+    console.log('[AUTH] Login request received');
 
     if (!identifier || !password) {
       return res.status(400).json({ message: 'Please provide email, roll number, or name and password.' });
@@ -160,8 +161,11 @@ const login = async (req, res) => {
       user: user.toPublicJSON ? user.toPublicJSON() : user
     });
   } catch (err) {
-    console.error('Error in login controller:', err);
-    return res.status(500).json({ message: 'Server error during login', error: err.message });
+    console.error('[AUTH] Unexpected login error:', {
+      name: err.name,
+      message: err.message
+    });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 

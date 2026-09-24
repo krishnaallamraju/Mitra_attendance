@@ -42,29 +42,29 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div class="min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-900">
       {/* Sidebar for Desktop */}
-      <aside class="hidden md:flex flex-col w-64 bg-white border-r border-slate-200/80 shrink-0 sticky top-0 h-screen z-30 justify-between p-5">
-        <div class="space-y-6">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200/80 shrink-0 sticky top-0 h-screen z-30 justify-between p-5">
+        <div className="space-y-6">
           {/* MITRA Logo Banner from user upload */}
-          <Link to={isAdmin ? '/admin-dashboard' : '/student-dashboard'} class="flex items-center gap-3 px-2">
+          <Link to={isAdmin ? '/admin-dashboard' : '/student-dashboard'} className="flex items-center gap-3 px-2">
             <img
               src="/mitra-logo.jpg"
               alt="MITRA Logo"
-              class="h-12 w-auto object-contain rounded-lg border border-slate-100 shadow-sm"
+              className="h-12 w-auto object-contain rounded-lg border border-slate-100 shadow-sm"
               onError={(e) => {
                 // Fallback styling if logo image fails
                 e.target.style.display = 'none';
               }}
             />
-            <div class="logo-fallback hidden">
-              <span class="font-extrabold text-xl text-slate-900 tracking-tight">MITRA</span>
-              <span class="block text-[10px] text-slate-500 font-medium">VISHNU TECH</span>
+            <div className="logo-fallback hidden">
+              <span className="font-extrabold text-xl text-slate-900 tracking-tight">MITRA</span>
+              <span className="block text-[10px] text-slate-500 font-medium">VISHNU TECH</span>
             </div>
           </Link>
 
           {/* Navigation Menu */}
-          <nav class="space-y-1.5 pt-2">
+          <nav className="space-y-1.5 pt-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
@@ -72,13 +72,13 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
                 <Link
                   key={item.path}
                   to={item.path}
-                  class={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     active
                       ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                   }`}
                 >
-                  <Icon class={`w-5 h-5 ${active ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`w-5 h-5 ${active ? 'text-white' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -87,14 +87,14 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
         </div>
 
         {/* User Card at Sidebar Bottom */}
-        <div class="pt-4 border-t border-slate-100 space-y-3">
-          <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-50 border border-slate-100">
-            <div class="w-9 h-9 rounded-full bg-emerald-500 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
+        <div className="pt-4 border-t border-slate-100 space-y-3">
+          <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="w-9 h-9 rounded-full bg-emerald-500 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
               {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-bold text-slate-900 truncate">{user?.name}</p>
-              <p class="text-[10px] text-slate-500 font-medium truncate">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-slate-900 truncate">{user?.name}</p>
+              <p className="text-[10px] text-slate-500 font-medium truncate">
                 {isAdmin ? 'Administrator' : user?.team || 'Student'}
               </p>
             </div>
@@ -102,53 +102,53 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
 
           <button
             onClick={handleLogout}
-            class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 font-semibold text-xs transition"
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 font-semibold text-xs transition"
           >
-            <LogOut class="w-4 h-4" />
+            <LogOut className="w-4 h-4" />
             Sign Out
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <div class="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header class="bg-white border-b border-slate-200/80 sticky top-0 z-20 px-4 sm:px-8 py-4 flex items-center justify-between shadow-xs">
+        <header className="bg-white border-b border-slate-200/80 sticky top-0 z-20 px-4 sm:px-8 py-4 flex items-center justify-between shadow-xs">
           {/* Left: Mobile Menu Toggle & Title */}
-          <div class="flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              class="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+              className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
             >
-              {mobileOpen ? <X class="w-6 h-6" /> : <Menu class="w-6 h-6" />}
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
             <div>
-              <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{title}</h1>
-              <p class="text-xs font-semibold text-emerald-600 -mt-0.5">{breadcrumbs}</p>
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{title}</h1>
+              <p className="text-xs font-semibold text-emerald-600 -mt-0.5">{breadcrumbs}</p>
             </div>
           </div>
 
           {/* Right: Search & Profile Quick Actions */}
-          <div class="flex items-center gap-4">
+          <div className="flex items-center gap-4">
             {/* Search Input */}
-            <div class="hidden sm:flex items-center relative w-64">
-              <Search class="w-4 h-4 text-slate-400 absolute left-3.5" />
+            <div className="hidden sm:flex items-center relative w-64">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5" />
               <input
                 type="text"
                 placeholder="Search anything..."
-                class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100/80 border-none text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition"
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100/80 border-none text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition"
               />
             </div>
 
             {/* User Badge */}
-            <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
-              <div class="w-9 h-9 rounded-full bg-emerald-500 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
+            <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
+              <div className="w-9 h-9 rounded-full bg-emerald-500 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
                 {user?.name?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <div class="hidden sm:block text-left">
-                <p class="text-xs font-bold text-slate-900">{user?.name}</p>
-                <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">{user?.role}</p>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-bold text-slate-900">{user?.name}</p>
+                <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">{user?.role}</p>
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
 
         {/* Mobile Navigation Drawer */}
         {mobileOpen && (
-          <div class="md:hidden bg-white border-b border-slate-200 p-4 space-y-2 animate-fade-in">
+          <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-2 animate-fade-in">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
@@ -165,11 +165,11 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileOpen(false)}
-                  class={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold ${
                     active ? 'bg-emerald-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  <Icon class="w-5 h-5" />
+                  <Icon className="w-5 h-5" />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -177,21 +177,21 @@ const SidebarLayout = ({ children, title = 'Attendance', breadcrumbs = 'Dashboar
 
             <button
               onClick={handleLogout}
-              class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-50 text-rose-600 font-bold text-xs mt-2"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-50 text-rose-600 font-bold text-xs mt-2"
             >
-              <LogOut class="w-4 h-4" /> Sign Out
+              <LogOut className="w-4 h-4" /> Sign Out
             </button>
           </div>
         )}
 
         {/* Page Content Body */}
-        <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
           {children}
         </main>
 
         {/* Footer */}
-        <footer class="py-4 px-8 border-t border-slate-200 text-center text-xs text-slate-500">
-          MITRA Club Attendance System • Vishnu Institute of Technology &copy; {new Date().getFullYear()}
+        <footer className="py-4 px-8 border-t border-slate-200 text-center text-xs text-slate-500">
+          MITRA Club Attendance System â€¢ Vishnu Institute of Technology &copy; {new Date().getFullYear()}
         </footer>
       </div>
     </div>

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
-const { isSupabaseConfigured, testSupabaseConnection } = require('./config/supabase');
+const { isSupabaseConfigured, getSupabaseConfigurationError, testSupabaseConnection } = require('./config/supabase');
 const { supabase } = require('./config/supabase');
 const bcrypt = require('bcryptjs');
 const { User } = require('./models/User');
@@ -134,7 +134,7 @@ app.use((err, req, res, next) => {
 // Initialize the configured database and local seed data once per process.
 const initializeDatabase = async () => {
   if (process.env.VERCEL && !isSupabaseConfigured()) {
-    throw new Error('Supabase must be configured when running the API on Vercel.');
+    throw new Error(`Supabase configuration error: ${getSupabaseConfigurationError()}`);
   }
 
   if (isSupabaseConfigured()) {
@@ -144,7 +144,7 @@ const initializeDatabase = async () => {
         console.log('[Server] Supabase PostgreSQL connected successfully.');
         await ensureSupabaseUsers();
       } else {
-        console.warn('[Server] Supabase ping returned:', connection.error || 'Check table schema');
+        throw new Error(`Supabase connection failed: ${connection.error || 'Check table schema'}`);
       }
   } else {
       console.log('[Server] Initializing local database fallback...');

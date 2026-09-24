@@ -1,17 +1,24 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseKey = serviceRoleKey || process.env.SUPABASE_KEY;
 
 let supabase = null;
 
 const isSupabaseConfigured = () => {
-  return (
-    Boolean(supabaseUrl) &&
-    Boolean(supabaseKey) &&
-    !supabaseUrl.includes('your-project.supabase.co') &&
-    !supabaseKey.includes('your_supabase_')
-  );
+  return !getSupabaseConfigurationError();
+};
+
+const getSupabaseConfigurationError = () => {
+  if (!supabaseUrl) return 'SUPABASE_URL is not configured.';
+  if (!supabaseKey) return 'SUPABASE_KEY or SUPABASE_SERVICE_ROLE_KEY is not configured.';
+  if (!serviceRoleKey && supabaseKey.startsWith('sb_publishable_')) {
+    return 'SUPABASE_SERVICE_ROLE_KEY is required for server-side Supabase writes.';
+  }
+  if (supabaseUrl.includes('your-project.supabase.co')) return 'SUPABASE_URL still uses the placeholder value.';
+  if (supabaseKey.includes('your_supabase_')) return 'Supabase key still uses the placeholder value.';
+  return null;
 };
 
 if (isSupabaseConfigured()) {
@@ -46,5 +53,6 @@ const testSupabaseConnection = async () => {
 module.exports = {
   supabase,
   isSupabaseConfigured,
+  getSupabaseConfigurationError,
   testSupabaseConnection
 };

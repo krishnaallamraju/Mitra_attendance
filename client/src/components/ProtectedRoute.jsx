@@ -9,9 +9,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (loading) {
     return (
-      <div class="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300">
-        <Loader2 class="w-10 h-10 text-sky-500 animate-spin mb-3" />
-        <p class="text-sm font-medium tracking-wide">Authenticating session...</p>
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300">
+        <Loader2 className="w-10 h-10 text-sky-500 animate-spin mb-3" />
+        <p className="text-sm font-medium tracking-wide">Authenticating session...</p>
       </div>
     );
   }
